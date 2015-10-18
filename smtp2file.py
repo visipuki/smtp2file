@@ -22,7 +22,7 @@ class SMTP2file(smtpd.SMTPServer):
         if not os.path.isdir(dir):
             os.makedirs(dir)
         filename = "email_{}.txt".format(datetime.now().strftime("%d_%b_%y_%H-%M-%S_%f"))
-        fullfilename = dir + os.path.sep + filename
+        fullfilename = os.path.join(dir, os.path.sep, filename)
         with open(fullfilename, "w") as f:
             f.write(data)
         attachments2file(mail, 'attachments')

@@ -18,6 +18,13 @@ def header2str(str):
            
     return str
 
+def msg2file(s, path):
+    parrent_dir = os.path.dirname(path)
+    if not os.path.is_dir(parrent_dir):
+        os.makedirs(parrent_dir)
+    with open(path, 'w') as f:
+        f.write(s)
+
 
 def attachments2file(msg, dir_out='.'):
     '''
@@ -25,26 +32,18 @@ def attachments2file(msg, dir_out='.'):
     '''
     for part in msg.walk():
         if part.get_content_maintype() == 'multipart':
-            for payload in part.get_payload():
-                if  payload.get_content_maintype() == 'text':
-                    print(payload.get_payload())
+            continue
+        if part.get_content_maintype() == 'text':
+            print(part.get_payload(decode=True))
             continue
         filename = header2str(part.get_filename())
-        if not filename:
-            print("data:\n{}".format(part.get_payload()))
-            continue
-        if not os.path.isdir(dir_out):
-            try:
-                os.mkdir(dir_out)
-            except FileExistsError:
-                print('Can\'t make dir to output attachments')
-                return
-        full_path = dir_out+'\\'+filename
-        for count in range(1, 1000):
-            if os.path.isfile(full_path):
-                full_path = dir_out+'\\'+'{:04d}_'.format(count)+filename
-        with open(full_path, 'wb') as fp:
-            fp.write(part.get_payload(decode=True))
+        if filename:
+            full_path = dir_out+'\\'+filename
+            for count in range(1, 1000):
+                if os.path.isfile(full_path):
+                    full_path = os.path.join(dir_out, '{:04d}_'.format(count)+filename)
+            with open(full_path, 'wb') as fp:
+                fp.write(part.get_payload(decode=True))
 
 
 def main():
