@@ -19,19 +19,21 @@ def header2str(str):
     return str
 
 
+def print_msg(msg):
+    for part in msg.walk():
+        if  part.get_content_maintype() == 'text':
+            print(part.get_payload())        
+            continue
+    
 def attachments2file(msg, dir_out='.'):
     '''
     Takes message, extracts attachments and saves them to directory
     '''
     for part in msg.walk():
         if part.get_content_maintype() == 'multipart':
-            for payload in part.get_payload():
-                if  payload.get_content_maintype() == 'text':
-                    print(payload.get_payload())
             continue
         filename = header2str(part.get_filename())
         if not filename:
-            print("data:\n{}".format(part.get_payload()))
             continue
         if not os.path.isdir(dir_out):
             try:
@@ -39,12 +41,13 @@ def attachments2file(msg, dir_out='.'):
             except FileExistsError:
                 print('Can\'t make dir to output attachments')
                 return
-        full_path = dir_out+'\\'+filename
+        full_path = os.path.join(dir_out, filename)
         for count in range(1, 1000):
             if os.path.isfile(full_path):
-                full_path = dir_out+'\\'+'{:04d}_'.format(count)+filename
+                full_path = os.path.join(dir_out, '{:04d}_'.format(count)+filename)
         with open(full_path, 'wb') as fp:
             fp.write(part.get_payload(decode=True))
+        print("\nAttachment {} is saved".format(full_path))
 
 
 def main():
