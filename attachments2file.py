@@ -18,6 +18,13 @@ def header2str(str):
            
     return str
 
+def msg2file(s, path):
+    parrent_dir = os.path.dirname(path)
+    if not os.path.is_dir(parrent_dir):
+        os.makedirs(parrent_dir)
+    with open(path, 'w') as f:
+        f.write(s)
+
 
 def print_msg(msg):
     for part in msg.walk():
@@ -48,7 +55,6 @@ def attachments2file(msg, dir_out='.'):
         with open(full_path, 'wb') as fp:
             fp.write(part.get_payload(decode=True))
         print("\nAttachment {} is saved".format(full_path))
-
 
 def main():
     if len(sys.argv) == 1:
