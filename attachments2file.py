@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.4
+#!/usr/bin/env python3
 '''
 Usage as script:
 attachments2file file1[ file2[...fileN]..]
@@ -29,8 +29,7 @@ def msg2file(s, path):
 def print_msg(msg):
     for part in msg.walk():
         if  part.get_content_maintype() == 'text':
-            print(part.get_payload())        
-            continue
+            print(part.get_payload(decode=True))        
     
 def attachments2file(msg, dir_out='.'):
     '''
