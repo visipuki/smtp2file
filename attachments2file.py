@@ -6,9 +6,11 @@ attachments2file file1[ file2[...fileN]..]
 import email
 import sys
 import os
+from datetime import datetime
 
 
 def header2str(str):
+    #decodes message subject
     if str:
         str = email.header.decode_header(str)
         encoding = str[0][1]
@@ -18,15 +20,19 @@ def header2str(str):
            
     return str
 
-def msg2file(s, path):
-    parrent_dir = os.path.dirname(path)
-    if not os.path.is_dir(parrent_dir):
-        os.makedirs(parrent_dir)
-    with open(path, 'w') as f:
+def msg2file(s, dir_out):
+    #saves entire message into file
+    if not os.path.isdir(dir_out):
+        os.makedirs(dir_out)
+    filename = "email_{}.txt".format(datetime.now().strftime("%d_%b_%y_%H-%M-%S_%f"))
+    fullfilename = os.path.join(dir_out, filename)
+    with open(fullfilename, 'w') as f:
         f.write(s)
+    print('\nmsg saved as {}'.format(fullfilename))
 
 
-def print_msg(msg):
+def print_body(msg):
+    #prints message body
     for part in msg.walk():
         if  part.get_content_maintype() == 'text':
             if part['Content-Transfer-Encoding'] == 'base64' or part['Content-Transfer-Encoding'] == 'quoted-printable':
