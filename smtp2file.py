@@ -19,13 +19,13 @@ class SMTP2file(smtpd.SMTPServer):
         print("Subject:  {}".format(header2str(mail['Subject'])))
         print("Data:")
         print_msg(mail)
-        dir = os.path.join(os.curdir, MSGS_DIR)
-        if not os.path.isdir(dir):
-            os.makedirs(dir)
+        if not os.path.isdir(MSGS_DIR):
+            os.makedirs(MSGS_DIR)
         filename = "email_{}.txt".format(datetime.now().strftime("%d_%b_%y_%H-%M-%S_%f"))
-        fullfilename = os.path.join(dir, os.path.sep, filename)
+        fullfilename = os.path.join(MSGS_DIR, filename)
         with open(fullfilename, "w") as f:
             f.write(data)
+            print('msg saved as {}'.format(fullfilename))
         attachments2file(mail, 'attachments')
         print("********END of msg*********")
         

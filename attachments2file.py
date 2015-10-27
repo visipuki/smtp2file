@@ -29,7 +29,10 @@ def msg2file(s, path):
 def print_msg(msg):
     for part in msg.walk():
         if  part.get_content_maintype() == 'text':
-            print(part.get_payload(decode=True))        
+            if part['Content-Transfer-Encoding'] == 'base64' or part['Content-Transfer-Encoding'] == 'quoted-printable':
+                print(part.get_payload(decode=True).decode(part.get_content_charset()))
+            else:
+                print(part.get_payload())
     
 def attachments2file(msg, dir_out='.'):
     '''
@@ -53,7 +56,7 @@ def attachments2file(msg, dir_out='.'):
                 full_path = os.path.join(dir_out, '{:04d}_'.format(count)+filename)
         with open(full_path, 'wb') as fp:
             fp.write(part.get_payload(decode=True))
-        print("\nAttachment {} is saved".format(full_path))
+        print("\nAttachment is saved as {}".format(full_path))
 
 def main():
     if len(sys.argv) == 1:
